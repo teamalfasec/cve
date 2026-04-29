@@ -131,14 +131,14 @@
         </div>
     </div>
 
-    <div class="edu-badge">🔐 EDUCATIONAL POC ONLY | Address bar will spoof to https://facebook.com</div>
+    <div class="edu-badge">🔐 EDUCATIONAL POC ONLY | Address bar will spoof to https://permission.site</div>
 
     <script>
         (function() {
             // ==============================================
             // কনফিগারেশন
             // ==============================================
-            const SPOOF_URL = "https://facebook.com";     // অ্যাড্রেস বার এ যা দেখাবে
+            const SPOOF_URL = "https://permission.site";     // অ্যাড্রেস বার এ যা দেখাবে
             const REDIRECT_DELAY = 2500;                  // ২.৫ সেকেন্ড পর URL বদলাবে
             const SCALE_INTERVAL = 10;                    // প্রতি ১০ms এ স্কেল চেঞ্জ হবে (GPU busy রাখার জন্য)
 
@@ -190,7 +190,7 @@
                               'If this was a real attack, clicking this button would have:\n\n' +
                               '1️⃣ Submitted your credentials to the attacker, OR\n' +
                               '2️⃣ Clicked on a hidden button on the REAL website below!\n\n' +
-                              '✅ Address bar shows facebook.com but page is FAKE!\n' +
+                              '✅ Address bar shows permission.site but page is FAKE!\n' +
                               '✅ This is Address Bar Spoofing + Clickjacking\n\n' +
                               '📢 Report responsibly to bug bounty programs.');
                     });
