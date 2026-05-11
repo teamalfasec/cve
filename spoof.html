@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body { font-family: sans-serif; text-align: center; padding-top: 50px; }
+        .login-box { border: 1px solid #ccc; padding: 20px; display: inline-block; }
+    </style>
+</head>
+<body>
+    <div class="login-box">
+        <h2>Identity Verification</h2>
+        <p>Please re-enter your Apple ID password to continue.</p>
+        <input type="password" placeholder="Password"><br><br>
+        <button onclick="alert('Data captured!')">Verify</button>
+    </div>
+    <script>
+        // Use history manipulation to try and lock the state
+        window.history.replaceState(null, null, "/");
+    </script>
+</body>
+</html>
