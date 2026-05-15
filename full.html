@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fullscreen Test</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f0f0f0;
+            font-family: sans-serif;
+        }
+        button {
+            padding: 15px 30px;
+            font-size: 18px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+    <button id="fullscreenBtn">Enter Fullscreen</button>
+
+    <script>
+        const btn = document.getElementById('fullscreenBtn');
+
+        btn.addEventListener('click', () => {
+            const docEl = document.documentElement;
+
+            if (docEl.requestFullscreen) {
+                docEl.requestFullscreen();
+            } else if (docEl.mozRequestFullScreen) { // Firefox
+                docEl.mozRequestFullScreen();
+            } else if (docEl.webkitRequestFullscreen) { // Chrome, Safari, Opera (iOS/Mac)
+                docEl.webkitRequestFullscreen();
+            } else if (docEl.msRequestFullscreen) { // IE/Edge
+                docEl.msRequestFullscreen();
+            } else {
+                alert("আপনার ব্রাউজারটি ফুলস্ক্রিন মোড সাপোর্ট করছে না। Safari ব্যবহার করে দেখুন।");
+            }
+        });
+
+        // ফুলস্ক্রিন চেঞ্জ ডিটেক্ট করা (অপশনাল)
+        document.addEventListener('fullscreenchange', () => {
+            if (document.fullscreenElement) {
+                btn.innerText = "Exit Fullscreen";
+            } else {
+                btn.innerText = "Enter Fullscreen";
+            }
+        });
+    </script>
+</body>
+</html>
